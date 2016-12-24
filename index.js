@@ -23,7 +23,7 @@ alexaApp.dictionary = { "start_synonym": ["turn on", "start", "enable"], "stop_s
 alexaApp.intent("EnableDud", {
     "slots": { },
     "utterances": [
-      "{start_synonym} dud"
+      "{start_synonym}"
     ]
   },
   function(req, res) {
@@ -40,7 +40,7 @@ alexaApp.intent("EnableDud", {
 alexaApp.intent("DisableDud", {
     "slots": { },
     "utterances": [
-      "{stop_synonym} dud"
+      "{stop_synonym}"
     ]
   },
   function(req, res)  {
