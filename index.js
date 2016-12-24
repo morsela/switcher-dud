@@ -26,7 +26,7 @@ alexaApp.intent("EnableDud", {
       "{start_synonym} dud"
     ]
   },
-  function(request, response) {
+  function(req, res) {
   	request(ENABLE_CMD, function (error, response, body) {
   		if (error || response.statusCode != 200) {
   			response.say("Dood was not turned on");
@@ -43,7 +43,7 @@ alexaApp.intent("DisableDud", {
       "{stop_synonym} dud"
     ]
   },
-  function(request, response) {
+  function(req, res)  {
   	request(DISABLE_CMD, function (error, response, body) {
   		if (error || response.statusCode != 200) {
   			response.say("Dood was not turned off");
