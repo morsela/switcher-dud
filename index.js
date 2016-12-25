@@ -30,11 +30,8 @@ alexaApp.intent("GetDoodStatus", {
   },
   function(req, res) {
     rp(GET_STATE).then(function (body) {
-      console.log(body);
       parsed_body = JSON.parse(body);
-      console.log(parsed_body);
       state = parsed_body["state"];
-      console.log(state);
 
       if (state == "on") {
         console.log("Dood is on")
