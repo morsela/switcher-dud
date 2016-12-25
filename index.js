@@ -75,7 +75,7 @@ alexaApp.intent("EnableDood", {
     rp(util.format(ENABLE_CMD, TOKEN, SWITCH_ID)).then(function(body) {
       res.card({
         type: "Standard",
-        title: "Switcher Dud"
+        title: "Switcher Dud",
         text: "Switcher Dud is now on",
         image: {
           smallImageUrl: "https://apkplz.com/storage/images/com/codewithcontent/switcher/android/300/switcher-dud.png"
@@ -130,7 +130,7 @@ alexaApp.intent("DisableDood", {
     rp(util.format(DISABLE_CMD, TOKEN, SWITCH_ID)).then(function(body) {
       res.card({
         type: "Standard",
-        title: "Switcher Dud"
+        title: "Switcher Dud",
         text: "Switcher Dud is now off",
         image: {
           smallImageUrl: "https://apkplz.com/storage/images/com/codewithcontent/switcher/android/300/switcher-dud.png"
