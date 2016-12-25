@@ -120,14 +120,17 @@ alexaApp.intent("DisableDood", {
   },
   function(req, res)  {
     rp(util.format(DISABLE_CMD, TOKEN, SWITCH_ID)).then(function(body) {
-      res.say("Dood was stopped successfully!").send();
+      res.card({
+        type: "Standard",
+        text: "Switcher Dud is now off",
+      }).say("Dood was stopped successfully!").send();
     }).catch(function (err) {
       console.log(err)
 
       res.card({
         type: "Standard",
-        text: "Switcher Dud is now off",
-      }).say("cannot stop dood").send();
+        text: "Switcher Dud could not be turned off",
+      }).say("cannot turn off dood").send();
     });
 
     return false;
