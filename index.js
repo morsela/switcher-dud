@@ -24,11 +24,9 @@ const TOKEN = "1455239767592"
 const SWITCH_ID = "1429959227412"
 
 var alexaApp = new alexa.app("SwitcherDud");
-alexaApp.launch(function(request, response) {
-  response.say("You launched the app!");
-});
 
-alexaApp.dictionary = { "start_synonym": ["turn on", "start", "enable"], "stop_synonym": ["turn off", "stop", "disable"] };
+alexaApp.dictionary = { "start_synonym": ["turn on", "start", "enable"], 
+                        "stop_synonym":  ["turn off", "stop", "disable"] };
 
 alexaApp.intent('GetDoodStatus', {
     "slots": { },
@@ -90,7 +88,7 @@ alexaApp.intent("EnableDoodWithDuration", {
     ]
   },
   function(req, res) {
-    var duration = request.slot("Duration");
+    var duration = req.slot("Duration");
     console.log(duration);
     res.say("enable for " + duration);
 
