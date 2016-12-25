@@ -1,7 +1,7 @@
 var express = require("express");
 var alexa = require("alexa-app");
 var bodyParser = require("body-parser");
-var request = require('request');
+var rp = require('request-promise');
 
 var app = express();
 var PORT = process.env.PORT || 8080;
@@ -29,26 +29,27 @@ alexaApp.intent("GetDoodStatus", {
     ]
   },
   function(req, res) {
-    res.say("hey dood");
-    // request(GET_STATE, function (error, response, body) {
-    //   if (error || response.statusCode != 200) {
-    //     console.log(error);
+    rp(GET_STATE).then(function (body) {
+      console.log(body);
+      parsed_body = JSON.parse(body);
+      console.log(parsed_body);
+      state = parsed_body["state"];
+      console.log(state);
 
-    //     res.say("Cannot get state");
-    //   } else {
-    //     console.log(body);
-    //     parsed_body = JSON.parse(body);
-    //     console.log(parsed_body);
-    //     state = parsed_body["state"];
-    //     console.log(state);
+      if (state == "on") {
+        console.log("Dood is on")
 
-    //     if (state == "on") {
-    //       res.say("Dood is on");
-    //     } else {
-    //       res.say("Dood is off");
-    //     }
-    //   }
-    // })
+        res.say("Dood is on");
+      } else {
+        console.log("Dood is off")
+
+        res.say("Dood is off");
+      }
+    }).catch(function (err) {
+      console.log(err)
+
+      res.say("Cannot get state");
+    });
   }
 );
 

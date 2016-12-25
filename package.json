@@ -8,7 +8,8 @@
     "body-parser": "^1.15.2",
     "ejs": "^2.5.5",
     "express": "^4.14.0",
-    "request": "^2.79.0"
+    "request": "^2.79.0",
+    "request-promise": "^4.1.1"
   },
   "devDependencies": {},
   "scripts": {
