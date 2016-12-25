@@ -33,18 +33,18 @@ alexaApp.intent('GetDoodStatus', {
       state = parsed_body["state"];
 
       if (state == "on") {
-        console.log("Dood is on")
+        console.log("The Dood is on")
 
-        res.say("Dood is on").send();;
+        res.say("The Dood is on").send();;
       } else {
-        console.log("Dood is off")
+        console.log("The Dood is off")
 
-        res.say("Dood is off").send();;
+        res.say("The Dood is off").send();;
       }
     }).catch(function (err) {
       console.log(err)
 
-      res.say("Cannot get state").send();;
+      res.say("Cannot get dood state").send();;
     });
 
     return false;
@@ -58,13 +58,15 @@ alexaApp.intent("EnableDood", {
     ]
   },
   function(req, res) {
-  	request(ENABLE_CMD, function (error, response, body) {
-  		if (error || response.statusCode != 200) {
-  			res.say("Dood was not turned on");
-  		} else {
-  			res.say("Dood was turned on successfully!");
-  		}
-	})
+    rp(ENABLE_CMD).then(function(body) {
+      res.say("Dood was turned on successfully!").send();
+    }).catch(function (err) {
+      console.log(err)
+
+      res.say("cannot start dood").send();;
+    });
+
+    return false;
   }
 );
 
@@ -96,13 +98,15 @@ alexaApp.intent("DisableDood", {
     ]
   },
   function(req, res)  {
-  	request(DISABLE_CMD, function (error, response, body) {
-  		if (error || response.statusCode != 200) {
-  			res.say("Dood was not turned off");
-  		} else {
-  			res.say("Dood was turned off successfully!");
-  		}
-	})
+    rp(DISABLE_CMD).then(function(body) {
+      res.say("Dood was stopped successfully!").send();
+    }).catch(function (err) {
+      console.log(err)
+
+      res.say("cannot stop dood").send();;
+    });
+
+    return false;
   }
 );
 
