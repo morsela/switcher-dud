@@ -21,8 +21,8 @@ const DISABLE_CMD     = BASE_URL + "/appServiceSetSwitchState?token=%s&switchId=
 const ENABLE_DURATION = BASE_URL + "/setSpontaneousEvent?token=%s&switchId=%s&isManual=true&duration=%s"
 const GET_STATE       = BASE_URL + "/appServiceGetSwitchState?token=%s&switchId=%s"
 
-const TOKEN = "1455239767592"
-const SWITCH_ID = "1429959227412"
+const TOKEN     = process.env.SWITCHER_ACCOUNT_TOKEN
+const SWITCH_ID = process.env.SWITCHER_SWITCH_ID
 
 var alexaApp = new alexa.app("SwitcherDud");
 
@@ -32,7 +32,7 @@ alexaApp.dictionary = { "start_synonym": ["turn on", "start", "enable"],
 alexaApp.intent('GetDoodStatus', {
     "slots": { },
     "utterances": [
-      "status"
+      "status", "the status", "{ what\'s| what is| what|whats } the status"
     ]
   }, function(req, res) {
     rp(util.format(GET_STATE, TOKEN, SWITCH_ID)).then(function(body) {
