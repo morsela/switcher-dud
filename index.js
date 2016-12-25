@@ -94,7 +94,6 @@ alexaApp.intent("EnableDoodWithDuration", {
     var duration_ms    = parseDuration(duration_param)
 
     duration_string = moment.duration(duration_ms, "ms").format("h [hours], m [minutes], s [seconds]");
-    res.say("enable for " + duration_string);
 
     rp(util.format(ENABLE_DURATION, TOKEN, SWITCH_ID, duration_ms)).then(function(body) {
       res.say(util.format("Dood was turned on for %s successfully!", duration_string)).send();
@@ -115,7 +114,7 @@ alexaApp.intent("DisableDood", {
     ]
   },
   function(req, res)  {
-    rp(util.format(ENABLE_CMD, TOKEN, SWITCH_ID)).then(function(body) {
+    rp(util.format(DISABLE_CMD, TOKEN, SWITCH_ID)).then(function(body) {
       res.say("Dood was stopped successfully!").send();
     }).catch(function (err) {
       console.log(err)
