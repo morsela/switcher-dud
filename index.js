@@ -33,7 +33,7 @@ alexaApp.intent('GetDoodStatus', {
       state = parsed_body["state"];
 
       if (state == "on") {
-        duration = parsed_bodyp["spontaneousEvent"]["currentDuration"]
+        var duration = parsed_body["spontaneousEvent"]["currentDuration"]
         console.log("The Dood is on")
 
         res.say('The Dood is on for <say-as interpret-as="time">1h</say-as>').send();;
@@ -45,7 +45,7 @@ alexaApp.intent('GetDoodStatus', {
     }).catch(function (err) {
       console.log(err)
 
-      res.say("Cannot get dood state").send();;
+      res.say("Cannot get dood state: " + err).send();;
     });
 
     return false;
