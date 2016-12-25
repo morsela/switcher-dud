@@ -22,30 +22,29 @@ alexaApp.launch(function(request, response) {
 
 alexaApp.dictionary = { "start_synonym": ["turn on", "start", "enable"], "stop_synonym": ["turn off", "stop", "disable"] };
 
-alexaApp.intent("GetDoodStatus", {
+alexaApp.intent('GetDoodStatus', {
     "slots": { },
     "utterances": [
       "status"
     ]
-  },
-  function(req, res) {
-    rp(GET_STATE).then(function (body) {
+  }, function(req, res) {
+    rp(GET_STATE).then(function(body) {
       parsed_body = JSON.parse(body);
       state = parsed_body["state"];
 
       if (state == "on") {
         console.log("Dood is on")
 
-        res.say("Dood is on");
+        res.say("Dood is on").send();;
       } else {
         console.log("Dood is off")
 
-        res.say("Dood is off");
+        res.say("Dood is off").send();;
       }
     }).catch(function (err) {
       console.log(err)
 
-      res.say("Cannot get state");
+      res.say("Cannot get state").send();;
     });
 
     return false;
