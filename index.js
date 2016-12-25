@@ -73,7 +73,15 @@ alexaApp.intent("EnableDood", {
   },
   function(req, res) {
     rp(util.format(ENABLE_CMD, TOKEN, SWITCH_ID)).then(function(body) {
-      res.say("Dood was turned on successfully!").send();
+      res.card({
+        type: "Standard",
+        title: "Switcher Dud"
+        text: "Switcher Dud is now on",
+        image: {
+          smallImageUrl: "https://apkplz.com/storage/images/com/codewithcontent/switcher/android/300/switcher-dud.png"
+        }
+      }).say("Dood was turned on successfully!").send();
+
     }).catch(function (err) {
       console.log(err)
 
@@ -122,15 +130,16 @@ alexaApp.intent("DisableDood", {
     rp(util.format(DISABLE_CMD, TOKEN, SWITCH_ID)).then(function(body) {
       res.card({
         type: "Standard",
+        title: "Switcher Dud"
         text: "Switcher Dud is now off",
-      }).say("Dood was stopped successfully!").send();
+        image: {
+          smallImageUrl: "https://apkplz.com/storage/images/com/codewithcontent/switcher/android/300/switcher-dud.png"
+        }
+      }).say("Dood was turned off successfully!").send();
     }).catch(function (err) {
       console.log(err)
 
-      res.card({
-        type: "Standard",
-        text: "Switcher Dud could not be turned off",
-      }).say("cannot turn off dood").send();
+      res.say("cannot turn off dood").send();
     });
 
     return false;
