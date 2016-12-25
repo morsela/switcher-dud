@@ -36,7 +36,7 @@ alexaApp.intent('GetDoodStatus', {
         var duration = parsed_body["spontaneousEvent"]["currentDuration"]
         console.log("The Dood is on")
 
-        res.say('The Dood is on for <say-as interpret-as="time">1h</say-as>').send();;
+        res.say('The Dood is on for <say-as interpret-as="time">30m</say-as>').send();;
       } else {
         console.log("The Dood is off")
 
