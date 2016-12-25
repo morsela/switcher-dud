@@ -47,6 +47,8 @@ alexaApp.intent("GetDoodStatus", {
 
       res.say("Cannot get state");
     });
+
+    res.say("Dood is dood");
   }
 );
 
