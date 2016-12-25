@@ -3,6 +3,7 @@ var alexa = require("alexa-app");
 var bodyParser = require("body-parser");
 var rp = require('request-promise');
 var moment = require("moment");
+var util = require('util')
 
 require("moment-duration-format");
 
@@ -13,11 +14,14 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.set("view engine", "ejs");
 
-const ENABLE_CMD = "http://server.switcher.co.il/Switcher/appServiceSetSwitchState?token=1455239767592&switchId=1429959227412&state=on"
-const DISABLE_CMD = "http://server.switcher.co.il/Switcher/appServiceSetSwitchState?token=1455239767592&switchId=1429959227412&state=off"
-const ENABLE_DURATION = "http://server.switcher.co.il/Switcher/setSpontaneousEvent?token=1455239767592&switchId=1429959227412&isManual=true&duration=600000"
-const GET_STATE = "http://server.switcher.co.il/Switcher/appServiceGetSwitchState?token=1455239767592&switchId=1429959227412"
+const BASE_URL        = "http://server.switcher.co.il/Switcher"
+const ENABLE_CMD      = BASE_URL + "/appServiceSetSwitchState?token=%s&switchId=%s&state=on"
+const DISABLE_CMD     = BASE_URL + "/appServiceSetSwitchState?token=%s&switchId=%s&state=off"
+const ENABLE_DURATION = BASE_URL + "/setSpontaneousEvent?token=%s&switchId=%s&isManual=true&duration=%s"
+const GET_STATE       = BASE_URL + "/appServiceGetSwitchState?token=%s&switchId=%s"
 
+const TOKEN = "1455239767592"
+const SWITCH_ID = "1429959227412"
 
 var alexaApp = new alexa.app("SwitcherDud");
 alexaApp.launch(function(request, response) {
@@ -32,7 +36,7 @@ alexaApp.intent('GetDoodStatus', {
       "status"
     ]
   }, function(req, res) {
-    rp(GET_STATE).then(function(body) {
+    rp(util.format(GET_STATE, TOKEN, SWITCH_ID)).then(function(body) {
       parsed_body = JSON.parse(body);
       state = parsed_body["state"];
 
@@ -64,7 +68,7 @@ alexaApp.intent("EnableDood", {
     ]
   },
   function(req, res) {
-    rp(ENABLE_CMD).then(function(body) {
+    rp(util.format(ENABLE_CMD, TOKEN, SWITCH_ID)).then(function(body) {
       res.say("Dood was turned on successfully!").send();
     }).catch(function (err) {
       console.log(err)
@@ -86,14 +90,19 @@ alexaApp.intent("EnableDoodWithDuration", {
     ]
   },
   function(req, res) {
-    res.say("enable for duration");
-    // request(ENABLE_DURATION, function (error, response, body) {
-    //   if (error || response.statusCode != 200) {
-    //     response.say("Dood was not turned on");
-    //   } else {
-    //     response.say("Dood was turned on successfully!");
-    //   }
-  // })
+    var duration = request.slot("Duration");
+    console.log(duration);
+    res.say("enable for " + duration);
+
+    rp(util.format(ENABLE_DURATION, TOKEN, SWITCH_ID, duration)).then(function(body) {
+      res.say(util.format("Dood was turned on for %s successfully!", duration)).send();
+    }).catch(function (err) {
+      console.log(err)
+
+      res.say(util.format("cannot start dood for duration %s", duration)).send();
+    });
+
+    return false;
   }
 );
 
@@ -104,7 +113,7 @@ alexaApp.intent("DisableDood", {
     ]
   },
   function(req, res)  {
-    rp(DISABLE_CMD).then(function(body) {
+    rp(util.format(ENABLE_CMD, TOKEN, SWITCH_ID)).then(function(body) {
       res.say("Dood was stopped successfully!").send();
     }).catch(function (err) {
       console.log(err)
