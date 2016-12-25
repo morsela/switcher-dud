@@ -2,6 +2,7 @@ var express = require("express");
 var alexa = require("alexa-app");
 var bodyParser = require("body-parser");
 var rp = require('request-promise');
+var moment = require("moment");
 
 var app = express();
 var PORT = process.env.PORT || 8080;
@@ -14,6 +15,7 @@ const ENABLE_CMD = "http://server.switcher.co.il/Switcher/appServiceSetSwitchSta
 const DISABLE_CMD = "http://server.switcher.co.il/Switcher/appServiceSetSwitchState?token=1455239767592&switchId=1429959227412&state=off"
 const ENABLE_DURATION = "http://server.switcher.co.il/Switcher/setSpontaneousEvent?token=1455239767592&switchId=1429959227412&isManual=true&duration=600000"
 const GET_STATE = "http://server.switcher.co.il/Switcher/appServiceGetSwitchState?token=1455239767592&switchId=1429959227412"
+
 
 var alexaApp = new alexa.app("SwitcherDud");
 alexaApp.launch(function(request, response) {
@@ -33,10 +35,11 @@ alexaApp.intent('GetDoodStatus', {
       state = parsed_body["state"];
 
       if (state == "on") {
-        var duration = parsed_body["spontaneousEvent"]["currentDuration"]
+        var duration = 60 * 60 * 1000 - parsed_body["spontaneousEvent"]["currentDuration"]
         console.log("The Dood is on")
 
-        res.say('The Dood is on for <say-as interpret-as="time">30m</say-as>').send();;
+        duration_string = moment.duration(duration, "ms").format("h [hours], m [minutes]");
+        res.say('The Dood is on for ' + duration_string).send();;
       } else {
         console.log("The Dood is off")
 
