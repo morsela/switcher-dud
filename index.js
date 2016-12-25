@@ -4,6 +4,8 @@ var bodyParser = require("body-parser");
 var rp = require('request-promise');
 var moment = require("moment");
 
+require("moment-duration-format");
+
 var app = express();
 var PORT = process.env.PORT || 8080;
 
