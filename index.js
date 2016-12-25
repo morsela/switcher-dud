@@ -124,11 +124,11 @@ alexaApp.intent("DisableDood", {
     }).catch(function (err) {
       console.log(err)
 
-      response.card({
+      res.card({
         type: "Standard",
         text: "Switcher Dud is now off",
       });
-      
+
       res.say("cannot stop dood").send();;
     });
 
