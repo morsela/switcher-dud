@@ -31,10 +31,15 @@ alexaApp.intent("GetDoodStatus", {
   function(req, res) {
     request(GET_STATE, function (error, response, body) {
       if (error || response.statusCode != 200) {
+        console.log(error);
+
         res.say("Cannot get state");
       } else {
+        console.log(body);
         parsed_body = JSON.parse(body);
+        console.log(parsed_body);
         state = parsed_body["state"];
+        console.log(state);
 
         if (state == "on") {
           res.say("Dood is on");
