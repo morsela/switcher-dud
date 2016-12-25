@@ -4,6 +4,7 @@ var bodyParser = require("body-parser");
 var rp = require('request-promise');
 var moment = require("moment");
 var util = require('util')
+var parseDuration = require('parse-duration')
 
 require("moment-duration-format");
 
@@ -88,16 +89,19 @@ alexaApp.intent("EnableDoodWithDuration", {
     ]
   },
   function(req, res) {
-    var duration = req.slot("Duration");
-    console.log(duration);
-    res.say("enable for " + duration);
+    var duration_param = req.slot("Duration");
+    duration_param     = duration_param.replace("PT", "");
+    var duration_ms    = parseDuration(duration_param)
 
-    rp(util.format(ENABLE_DURATION, TOKEN, SWITCH_ID, duration)).then(function(body) {
-      res.say(util.format("Dood was turned on for %s successfully!", duration)).send();
+    duration_string = moment.duration(duration_ms, "ms").format("h [hours], m [minutes], s [seconds]");
+    res.say("enable for " + duration_string);
+
+    rp(util.format(ENABLE_DURATION, TOKEN, SWITCH_ID, duration_ms)).then(function(body) {
+      res.say(util.format("Dood was turned on for %s successfully!", duration_string)).send();
     }).catch(function (err) {
       console.log(err)
 
-      res.say(util.format("cannot start dood for duration %s", duration)).send();
+      res.say(util.format("cannot start dood for duration %s because %s", duration_string, err)).send();
     });
 
     return false;
