@@ -32,7 +32,7 @@ alexaApp.dictionary = { "start_synonym": ["turn on", "start", "enable"],
 alexaApp.intent('GetDoodStatus', {
     "slots": { },
     "utterances": [
-      "status", "the status", "{ what\'s| what is| what|whats } the status"
+      "state", "status", "the status", "{ what\'s| what is| what|whats } the status"
     ]
   }, function(req, res) {
     rp(util.format(GET_STATE, TOKEN, SWITCH_ID)).then(function(body) {
@@ -46,10 +46,14 @@ alexaApp.intent('GetDoodStatus', {
 
         duration_string = moment.duration(duration, "ms").format("h [hours], m [minutes], s [seconds]");
         res.say('The Dood is on for ' + duration_string).send();;
-      } else {
+      } else if (state == "off") {
         console.log("The Dood is off")
 
         res.say("The Dood is off").send();;
+      } else {
+        console.log("The Dood status is unknown")
+
+        res.say("The Dood status is unknown").send();;
       }
     }).catch(function (err) {
       console.log(err)
