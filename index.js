@@ -78,7 +78,8 @@ alexaApp.intent("EnableDood", {
         title: "Switcher Dud",
         text: "Switcher Dud is now on",
         image: {
-          smallImageUrl: "https://apkplz.com/storage/images/com/codewithcontent/switcher/android/300/switcher-dud.png"
+          smallImageUrl: "https://apkplz.com/storage/images/com/codewithcontent/switcher/android/300/switcher-dud.png",
+          largeImageUrl: "https://apkplz.com/storage/images/com/codewithcontent/switcher/android/300/switcher-dud.png"
         }
       }).say("Dood was turned on successfully!").send();
 
@@ -133,7 +134,8 @@ alexaApp.intent("DisableDood", {
         title: "Switcher Dud",
         text: "Switcher Dud is now off",
         image: {
-          smallImageUrl: "https://apkplz.com/storage/images/com/codewithcontent/switcher/android/300/switcher-dud.png"
+          smallImageUrl: "https://apkplz.com/storage/images/com/codewithcontent/switcher/android/300/switcher-dud.png",
+          largeImageUrl: "https://apkplz.com/storage/images/com/codewithcontent/switcher/android/300/switcher-dud.png"
         }
       }).say("Dood was turned off successfully!").send();
     }).catch(function (err) {
