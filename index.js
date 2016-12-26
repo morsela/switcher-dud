@@ -38,6 +38,7 @@ alexaApp.pre = function(request, response, type) {
 
   var session = request.getSession()
 
+  console.log(session);
   console.log(session["user"]["accessToken"])
   console.log(session["user"]["userId"])
   
