@@ -34,22 +34,11 @@ alexaApp.dictionary = { "start_synonym": ["turn on", "start", "enable"],
                         "stop_synonym":  ["turn off", "stop", "disable"] };
 
 alexaApp.pre = function(request, response, type) {
-  // console.log(request.user);
-
-  // var session = request.getSession()
-
-  // console.log(request);
   console.log(request.data.session.user);
-  console.log(request.data.session.user.accessToken);
-  
-  // console.log(request.session.user.accessToken)
-  // console.log(session["user"]["accessToken"])
-  // console.log(session["user"]["userId"])
-  
-  // if (request.applicationId != "amzn1.echo-sdk-ams.app.000000-d0ed-0000-ad00-000000d00ebe") {
-  //   // fail ungracefully
-  //   response.fail("Invalid applicationId");
-  // }
+
+  if (request.data.session.user.accessToken == undefined) {
+    response.linkAccount()
+  }
 };
 
 alexaApp.intent('GetDoodStatus', {
