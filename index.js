@@ -45,9 +45,9 @@ function getSwitchId(token) {
 }
 
 alexaApp.pre = function(request, response, type) {
-  if (request.data.session.user.accessToken == undefined) {
-    response.linkAccount().send()
-  }
+  // if (request.data.session.user.accessToken == undefined) {
+  //   response.linkAccount().send()
+  // }
 };
 
 alexaApp.intent('GetDoodStatus', {
@@ -56,7 +56,7 @@ alexaApp.intent('GetDoodStatus', {
       "state", "status", "the status", "{ what\'s| what is| what|whats } the status"
     ]
   }, function(req, res) {
-    console.log("switch: " + getSwitchId(TOKEN));
+    // console.log("switch: " + getSwitchId(TOKEN));
     
     rp({ uri: util.format(GET_STATE, TOKEN, SWITCH_ID), json: true}).then(function(body) {
       state = body["state"];
