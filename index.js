@@ -20,6 +20,7 @@ app.set("view engine", "ejs");
 
 const BASE_URL        = "http://server.switcher.co.il/Switcher"
 const LOGIN           = BASE_URL + "/loginApp"
+const GET_SWITCHES    = BASE_URL + "/appServiceGetSwitches?token=%s"
 const ENABLE_CMD      = BASE_URL + "/appServiceSetSwitchState?token=%s&switchId=%s&state=on"
 const DISABLE_CMD     = BASE_URL + "/appServiceSetSwitchState?token=%s&switchId=%s&state=off"
 const ENABLE_DURATION = BASE_URL + "/setSpontaneousEvent?token=%s&switchId=%s&isManual=true&duration=%s"
@@ -34,18 +35,18 @@ alexaApp.dictionary = { "start_synonym": ["turn on", "start", "enable"],
                         "stop_synonym":  ["turn off", "stop", "disable"] };
 
 function getSwitchId(token) {
-  rp(util.format(ENABLE_CMD, TOKEN, SWITCH_ID)).then(function(body) {
+  rp({ uri: util.format(GET_SWITCHES, token), json: true}).then(function(body) {
+      if (body.switches.length == 1) {
+        return body.switches[0]
+      }
     }).catch(function (err) {
       console.log(err)
-
-      res.say("cannot start dood").send();;
     });
 }
 
 alexaApp.pre = function(request, response, type) {
   if (request.data.session.user.accessToken == undefined) {
-    response.resolved = true
-    response.linkAccount()
+    response.linkAccount().send()
   }
 };
 
@@ -55,6 +56,8 @@ alexaApp.intent('GetDoodStatus', {
       "state", "status", "the status", "{ what\'s| what is| what|whats } the status"
     ]
   }, function(req, res) {
+    console.log("switch: " + getSwitchId(TOKEN));
+    
     rp({ uri: util.format(GET_STATE, TOKEN, SWITCH_ID), json: true}).then(function(body) {
       state = body["state"];
 
