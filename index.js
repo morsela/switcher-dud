@@ -39,9 +39,10 @@ alexaApp.pre = function(request, response, type) {
   // var session = request.getSession()
 
   // console.log(request);
-  console.log(request.body);
+  console.log(request.query);
+  console.log(request.data);
   console.log(request.session);
-  console.log(request.session.user.accessToken)
+  // console.log(request.session.user.accessToken)
   // console.log(session["user"]["accessToken"])
   // console.log(session["user"]["userId"])
   
