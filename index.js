@@ -33,12 +33,19 @@ var alexaApp = new alexa.app("SwitcherDud");
 alexaApp.dictionary = { "start_synonym": ["turn on", "start", "enable"], 
                         "stop_synonym":  ["turn off", "stop", "disable"] };
 
-alexaApp.pre = function(request, response, type) {
-  console.log(request.data.session.user);
+function getSwitchId(token) {
+  rp(util.format(ENABLE_CMD, TOKEN, SWITCH_ID)).then(function(body) {
+    }).catch(function (err) {
+      console.log(err)
 
+      res.say("cannot start dood").send();;
+    });
+}
+
+alexaApp.pre = function(request, response, type) {
   if (request.data.session.user.accessToken == undefined) {
+    response.resolved = true
     response.linkAccount()
-    response.fail("should link account")
   }
 };
 
