@@ -6,6 +6,9 @@ var moment = require("moment");
 var util = require('util')
 var parseDuration = require('parse-duration')
 
+var path    = require("path");
+var session = require('express-session')
+
 require("moment-duration-format");
 
 var app = express();
@@ -16,6 +19,7 @@ app.use(bodyParser.json());
 app.set("view engine", "ejs");
 
 const BASE_URL        = "http://server.switcher.co.il/Switcher"
+const LOGIN           = BASE_URL + "/loginApp"
 const ENABLE_CMD      = BASE_URL + "/appServiceSetSwitchState?token=%s&switchId=%s&state=on"
 const DISABLE_CMD     = BASE_URL + "/appServiceSetSwitchState?token=%s&switchId=%s&state=off"
 const ENABLE_DURATION = BASE_URL + "/setSpontaneousEvent?token=%s&switchId=%s&isManual=true&duration=%s"
@@ -29,15 +33,28 @@ var alexaApp = new alexa.app("SwitcherDud");
 alexaApp.dictionary = { "start_synonym": ["turn on", "start", "enable"], 
                         "stop_synonym":  ["turn off", "stop", "disable"] };
 
+alexaApp.pre = function(request, response, type) {
+  console.log(request);
+
+  var session = request.getSession()
+
+  console.log(session["user"]["accessToken"])
+  console.log(session["user"]["userId"])
+  
+  // if (request.applicationId != "amzn1.echo-sdk-ams.app.000000-d0ed-0000-ad00-000000d00ebe") {
+  //   // fail ungracefully
+  //   response.fail("Invalid applicationId");
+  // }
+};
+
 alexaApp.intent('GetDoodStatus', {
     "slots": { },
     "utterances": [
       "state", "status", "the status", "{ what\'s| what is| what|whats } the status"
     ]
   }, function(req, res) {
-    rp(util.format(GET_STATE, TOKEN, SWITCH_ID)).then(function(body) {
-      parsed_body = JSON.parse(body);
-      state = parsed_body["state"];
+    rp({ uri: util.format(GET_STATE, TOKEN, SWITCH_ID), json: true}).then(function(body) {
+      state = body["state"];
 
       if (state == "on") {
         var eventData = parsed_body["spontaneousEvent"]
@@ -75,8 +92,8 @@ alexaApp.intent("EnableDood", {
     rp(util.format(ENABLE_CMD, TOKEN, SWITCH_ID)).then(function(body) {
       res.card({
         type: "Standard",
-        title: "Switcher Dud",
-        text: "Switcher Dud is now on",
+        title: "Switcher Dud is ON",
+        text: "Switcher Dud has been turned on",
         image: {
           smallImageUrl: "https://apkplz.com/storage/images/com/codewithcontent/switcher/android/300/switcher-dud.png",
           largeImageUrl: "https://apkplz.com/storage/images/com/codewithcontent/switcher/android/300/switcher-dud.png"
@@ -131,8 +148,8 @@ alexaApp.intent("DisableDood", {
     rp(util.format(DISABLE_CMD, TOKEN, SWITCH_ID)).then(function(body) {
       res.card({
         type: "Standard",
-        title: "Switcher Dud",
-        text: "Switcher Dud is now off",
+        title: "Switcher Dud is OFF",
+        text: "Switcher Dud has been turned off",
         image: {
           smallImageUrl: "https://apkplz.com/storage/images/com/codewithcontent/switcher/android/300/switcher-dud.png",
           largeImageUrl: "https://apkplz.com/storage/images/com/codewithcontent/switcher/android/300/switcher-dud.png"
@@ -149,6 +166,55 @@ alexaApp.intent("DisableDood", {
 );
 
 alexaApp.express(app, "/echo/");
+
+app.use(session({
+  secret: '944e6073-98b4-4ffc-b486-f83c0bde0e40',
+  saveUninitialized: true,
+  resave: false
+}))
+
+app.get('/echo/SwitcherDud/login/', function(req, res) {
+  req.session.state       = req.query['state']
+  req.session.clientId    = req.query['client_id']
+  req.session.redirectURI = req.query['redirect_uri']
+
+  res.render(path.join(__dirname+'/views/login.ejs'));  
+});
+
+app.post('/echo/SwitcherDud/login/', function(req, res) {
+  var username = req.body['username']
+  var password = req.body['password']
+
+  var body = {
+    account_pid: username,
+    password: password,
+    app_id: "",
+    device_info: {
+      versions: {
+        os: "",
+        software: ""
+      }
+    }
+  }
+
+  rp({ method: 'POST', uri: LOGIN, json: true, body: body }).then(function(body) {
+    if (body['errorCode'] != 0) {
+      res.send("Failed to login")
+    } else {
+      var access_token = body['token']
+
+      if (req.session.redirectURI != undefined) {
+        res.redirect(util.format('%s&state=%s&access_token=%s&token_type=Bearer', req.session.redirectURI, req.session.state, access_token))  
+      } else {
+        res.send("Login success")
+      }
+    }    
+  }).catch(function (err) {
+      console.log(err)
+
+      res.say("login failed").send();
+  });
+});
 
 app.listen(PORT);
 console.log("Listening on port " + PORT);
