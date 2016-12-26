@@ -34,7 +34,7 @@ alexaApp.dictionary = { "start_synonym": ["turn on", "start", "enable"],
                         "stop_synonym":  ["turn off", "stop", "disable"] };
 
 alexaApp.pre = function(request, response, type) {
-  console.log(request);
+  console.log(request.user);
 
   var session = request.getSession()
 
