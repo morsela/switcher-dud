@@ -38,6 +38,7 @@ alexaApp.pre = function(request, response, type) {
 
   if (request.data.session.user.accessToken == undefined) {
     response.linkAccount()
+    response.fail("should link account")
   }
 };
 
