@@ -45,9 +45,9 @@ function getSwitchId(token) {
 }
 
 alexaApp.pre = function(request, response, type) {
-  // if (request.data.session.user.accessToken == undefined) {
-  //   response.linkAccount().send()
-  // }
+  if (request.data.session.user.accessToken == undefined) {
+    response.linkAccount().send()
+  }
 };
 
 alexaApp.intent('GetDoodStatus', {
@@ -56,6 +56,7 @@ alexaApp.intent('GetDoodStatus', {
       "state", "status", "the status", "{ what\'s| what is| what|whats } the status"
     ]
   }, function(req, res) {
+    // getDudStatus().then()
     // console.log("switch: " + getSwitchId(TOKEN));
 
     rp({ uri: util.format(GET_STATE, TOKEN, SWITCH_ID), json: true}).then(function(body) {
@@ -172,6 +173,7 @@ alexaApp.intent("DisableDood", {
 
 alexaApp.express(app, "/echo/");
 
+app.use(express.static('public'))
 app.use(session({
   secret: '944e6073-98b4-4ffc-b486-f83c0bde0e40',
   saveUninitialized: true,
@@ -179,16 +181,16 @@ app.use(session({
 }))
 
 app.get('/echo/SwitcherDud/login/', function(req, res) {
-  req.session.state       = req.query['state']
-  req.session.clientId    = req.query['client_id']
-  req.session.redirectURI = req.query['redirect_uri']
+  req.session.state       = req.query.state
+  req.session.clientId    = req.query.client_id
+  req.session.redirectURI = req.query.redirect_uri
 
   res.render(path.join(__dirname+'/views/login.ejs'));  
 });
 
 app.post('/echo/SwitcherDud/login/', function(req, res) {
-  var username = req.body['username']
-  var password = req.body['password']
+  var username = req.body.username
+  var password = req.body.password
 
   var body = {
     account_pid: username,
@@ -206,7 +208,7 @@ app.post('/echo/SwitcherDud/login/', function(req, res) {
     if (body['errorCode'] != 0) {
       res.send("Failed to login")
     } else {
-      var access_token = body['token']
+      var access_token = body.token
 
       if (req.session.redirectURI != undefined) {
         res.redirect(util.format('%s&state=%s&access_token=%s&token_type=Bearer', req.session.redirectURI, req.session.state, access_token))  
