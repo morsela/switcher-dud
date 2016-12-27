@@ -44,11 +44,11 @@ function getSwitchId(token) {
     });
 }
 
-alexaApp.pre = function(request, response, type) {
-  if (request.data.session.user.accessToken == undefined) {
-    response.linkAccount().send()
-  }
-};
+// alexaApp.pre = function(request, response, type) {
+//   if (request.data.session.user.accessToken == undefined) {
+//     response.linkAccount().send()
+//   }
+// };
 
 alexaApp.intent('GetDoodStatus', {
     "slots": { },
@@ -214,7 +214,8 @@ app.post('/echo/SwitcherDud/login/', function(req, res) {
       var access_token = body.token
 
       if (req.session.redirectURI != undefined) {
-        res.redirect(util.format('%s&state=%s&access_token=%s&token_type=Bearer', req.session.redirectURI, req.session.state, access_token))  
+        console.log(util.format('%s&state=%s&access_token=%s&token_type=Bearer', req.session.redirectURI, req.session.state, access_token))
+        res.redirect(util.format('%s&state=%s&access_token=%s&token_type=Bearer', req.session.redirectURI, req.session.state, access_token))
       } else {
         res.send("Login success")
       }
