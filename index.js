@@ -204,8 +204,11 @@ app.post('/echo/SwitcherDud/login/', function(req, res) {
     }
   }
 
+  console.log(body);
   rp({ method: 'POST', uri: LOGIN, json: true, body: body }).then(function(body) {
-    if (body['errorCode'] != 0) {
+    console.log(body);
+
+    if (body.errorCode != 0) {
       res.send("Failed to login")
     } else {
       var access_token = body.token
