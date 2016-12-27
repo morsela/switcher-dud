@@ -57,16 +57,16 @@ alexaApp.intent('GetDoodStatus', {
     ]
   }, function(req, res) {
     // console.log("switch: " + getSwitchId(TOKEN));
-    
+
     rp({ uri: util.format(GET_STATE, TOKEN, SWITCH_ID), json: true}).then(function(body) {
-      state = body["state"];
+      state = body.state;
 
       if (state == "on") {
-        var eventData = parsed_body["spontaneousEvent"]
-        var duration  = eventData['endTime'] - eventData['startTime'] - eventData['currentDuration']
-        console.log("The Dood is on")
+        var eventData = body.spontaneousEvent
+        var duration  = eventData.endTime - eventData.startTime - eventData.currentDuration
 
         duration_string = moment.duration(duration, "ms").format("h [hours], m [minutes], s [seconds]");
+        console.log("The Dood is on")
         res.say('The Dood is on for ' + duration_string).send();;
       } else if (state == "off") {
         console.log("The Dood is off")
