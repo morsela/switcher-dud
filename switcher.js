@@ -35,14 +35,14 @@ module.exports = class Switcher {
 	getState() {
 		var switcher = this;
 		return new Promise(function(resolve, reject) {
-			rp({ uri: util.format(GET_STATE, switcher.token, switcher.switchID), json: true}).then(function(body) {
-				var eventData = body.spontaneousEvent
-				var duration  = eventData.endTime - eventData.startTime - eventData.currentDuration
+			rp({ uri: util.format(GET_STATE, switcher.token, switcher.switchID), json: true }).then(function(body) {
+				var eventData 		= body.spontaneousEvent
+				var duration  		= eventData.endTime - eventData.startTime - eventData.currentDuration
 				var duration_string = moment.duration(duration, "ms").format("h [hours], m [minutes], s [seconds]");
 
 				var result = {
-					state: body.state,
-					duration: duration,
+					state: 			 body.state,
+					duration: 		 duration,
 					duration_string: duration_string
 				}
 

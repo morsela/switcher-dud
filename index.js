@@ -45,6 +45,7 @@ alexaApp.intent('GetDoodStatus', {
   }, function(req, res) {
     var switcher = new Switcher(req.data.session.user.accessToken);
     switcher.getState().then(function(result) {
+      console.log(result);
       var stringToSay = 'The dood status is unknown';
 
       if (result.state == 'on') {
