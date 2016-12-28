@@ -11,6 +11,7 @@ var session = require('express-session')
 
 var Switcher = require('./switcher')
 
+const BASE_URL = "http://server.switcher.co.il/Switcher"
 const LOGIN = BASE_URL + "/loginApp"
 
 var app = express();
