@@ -80,7 +80,7 @@ module.exports = class Switcher {
         });
     }
 
-    enable() {
+    disable() {
         var switcher = this;
         return new Promise((resolve, reject) => {
             rp({ url: util.format(DISABLE_CMD, switcher.token, switcher.switchID), json: true }).then(body => {

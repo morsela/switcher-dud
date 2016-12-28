@@ -1,10 +1,13 @@
 var express = require("express");
 var alexa = require("alexa-app");
 var bodyParser = require("body-parser");
+
 var rp = require('request-promise');
 var util = require('util')
 
+var moment = require("moment");
 var parseDuration = require('parse-duration')
+require("moment-duration-format");
 
 var path    = require("path");
 var session = require('express-session')
