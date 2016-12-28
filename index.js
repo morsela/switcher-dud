@@ -4,13 +4,10 @@ var bodyParser = require("body-parser");
 var rp = require('request-promise');
 var util = require('util')
 
-
-
 var parseDuration = require('parse-duration')
 
 var path    = require("path");
 var session = require('express-session')
-
 
 var Switcher = require('./switcher').Switcher
 
@@ -28,6 +25,8 @@ var alexaApp = new alexa.app("SwitcherDud");
 
 alexaApp.dictionary = { "start_synonym": ["turn on", "start", "enable"], 
                         "stop_synonym":  ["turn off", "stop", "disable"] };
+
+alexaApp.error = console.error
 
 alexaApp.pre = function(request, response, type) {
   console.log(request.data)
