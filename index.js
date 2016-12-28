@@ -9,7 +9,7 @@ var parseDuration = require('parse-duration')
 var path    = require("path");
 var session = require('express-session')
 
-var Switcher = require('./switcher').Switcher
+var Switcher = require('./switcher')
 
 var app = express();
 var PORT = process.env.PORT || 8080;
@@ -43,11 +43,8 @@ alexaApp.intent('GetDoodStatus', {
       "state", "status", "the status", "{ what\'s| what is| what|whats } the status"
     ]
   }, function(req, res) {
-    console.log(req);
     var switcher = new Switcher(req.data.session.user.accessToken);
-    console.log(switcher);
     switcher.getState().then(function(result) {
-      console.log(result);
       var stringToSay = 'The dood status is unknown';
 
       if (result.state == 'on') {
@@ -58,7 +55,6 @@ alexaApp.intent('GetDoodStatus', {
 
       res.say(stringToSay).send();
     }).catch(function (err) {
-      console.log(err);
       res.say("Cannot get dood state: " + err).send();;
     });
 
