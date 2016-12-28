@@ -11,6 +11,8 @@ var session = require('express-session')
 
 var Switcher = require('./switcher')
 
+const LOGIN = BASE_URL + "/loginApp"
+
 var app = express();
 var PORT = process.env.PORT || 8080;
 
@@ -50,7 +52,7 @@ alexaApp.intent('GetDoodStatus', {
 
       if (result.state == 'on') {
         stringToSay = 'The dood is on for ' + result.duration_string;
-      } else if (result.status == "off") {
+      } else if (result.state == 'off') {
         stringToSay = 'The Dood is off';
       } 
 

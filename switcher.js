@@ -7,7 +7,6 @@ var moment = require("moment");
 require("moment-duration-format");
 
 const BASE_URL        = "http://server.switcher.co.il/Switcher"
-const LOGIN           = BASE_URL + "/loginApp"
 const GET_SWITCHES    = BASE_URL + "/appServiceGetSwitches?token=%s"
 const ENABLE_CMD      = BASE_URL + "/appServiceSetSwitchState?token=%s&switchId=%s&state=on"
 const DISABLE_CMD     = BASE_URL + "/appServiceSetSwitchState?token=%s&switchId=%s&state=off"
