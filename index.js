@@ -44,6 +44,7 @@ alexaApp.intent('GetDoodStatus', {
       "state", "status", "the status", "{ what\'s| what is| what|whats } the status"
     ]
   }, function(req, res) {
+    console.log(req);
     var switcher = new Switcher(req.data.session.user.accessToken);
     console.log(switcher);
     switcher.getState().then(function(result) {
