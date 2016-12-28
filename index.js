@@ -115,7 +115,7 @@ alexaApp.intent("EnableDoodWithDuration", {
 
     Switcher.create(req.data.session.user.accessToken).then(switcher => {
       switcher.enableWithDuration(duration_ms).then(result => {
-
+        res.say(util.format("Dood was turned on for %s successfully!", duration_string)).send();
       }).catch(err => {
         res.say(util.format("cannot start dood for %s because %s", duration_string, err)).send();
       });
