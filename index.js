@@ -2,14 +2,17 @@ var express = require("express");
 var alexa = require("alexa-app");
 var bodyParser = require("body-parser");
 var rp = require('request-promise');
-var moment = require("moment");
 var util = require('util')
+
+
+
 var parseDuration = require('parse-duration')
 
 var path    = require("path");
 var session = require('express-session')
 
-require("moment-duration-format");
+
+var Switcher = require('./switcher').Switcher
 
 var app = express();
 var PORT = process.env.PORT || 8080;
@@ -17,14 +20,6 @@ var PORT = process.env.PORT || 8080;
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.set("view engine", "ejs");
-
-const BASE_URL        = "http://server.switcher.co.il/Switcher"
-const LOGIN           = BASE_URL + "/loginApp"
-const GET_SWITCHES    = BASE_URL + "/appServiceGetSwitches?token=%s"
-const ENABLE_CMD      = BASE_URL + "/appServiceSetSwitchState?token=%s&switchId=%s&state=on"
-const DISABLE_CMD     = BASE_URL + "/appServiceSetSwitchState?token=%s&switchId=%s&state=off"
-const ENABLE_DURATION = BASE_URL + "/setSpontaneousEvent?token=%s&switchId=%s&isManual=true&duration=%s"
-const GET_STATE       = BASE_URL + "/appServiceGetSwitchState?token=%s&switchId=%s"
 
 const TOKEN     = process.env.SWITCHER_ACCOUNT_TOKEN
 const SWITCH_ID = process.env.SWITCHER_SWITCH_ID
@@ -34,21 +29,13 @@ var alexaApp = new alexa.app("SwitcherDud");
 alexaApp.dictionary = { "start_synonym": ["turn on", "start", "enable"], 
                         "stop_synonym":  ["turn off", "stop", "disable"] };
 
-function getSwitchId(token) {
-  rp({ uri: util.format(GET_SWITCHES, token), json: true}).then(function(body) {
-      if (body.switches.length == 1) {
-        return body.switches[0]
-      }
-    }).catch(function (err) {
-      console.log(err)
-    });
-}
-
 alexaApp.pre = function(request, response, type) {
   console.log(request.data)
-  // if (request.data.session.user.accessToken == undefined) {
-  //   response.linkAccount().send()
-  // }
+  console.log(request.data.session.user)
+
+  if (request.data.session.user.accessToken == undefined) {
+    response.linkAccount().say("please link the switcher dood account").send()
+  }
 };
 
 alexaApp.intent('GetDoodStatus', {
@@ -57,31 +44,18 @@ alexaApp.intent('GetDoodStatus', {
       "state", "status", "the status", "{ what\'s| what is| what|whats } the status"
     ]
   }, function(req, res) {
-    // getDudStatus().then()
-    // console.log("switch: " + getSwitchId(TOKEN));
+    var switcher = new Switcher(request.data.session.user.accessToken);
+    switcher.getState().then(function(result) {
+      var stringToSay = 'The dood status is unknown';
 
-    rp({ uri: util.format(GET_STATE, TOKEN, SWITCH_ID), json: true}).then(function(body) {
-      state = body.state;
+      if (result.state == 'on') {
+        stringToSay = 'The dood is on for ' + result.duration_string;
+      } else if (result.status == "off") {
+        stringToSay = 'The Dood is off';
+      } 
 
-      if (state == "on") {
-        var eventData = body.spontaneousEvent
-        var duration  = eventData.endTime - eventData.startTime - eventData.currentDuration
-
-        duration_string = moment.duration(duration, "ms").format("h [hours], m [minutes], s [seconds]");
-        console.log("The Dood is on")
-        res.say('The Dood is on for ' + duration_string).send();;
-      } else if (state == "off") {
-        console.log("The Dood is off")
-
-        res.say("The Dood is off").send();;
-      } else {
-        console.log("The Dood status is unknown")
-
-        res.say("The Dood status is unknown").send();;
-      }
+      res.say(stringToSay).send();
     }).catch(function (err) {
-      console.log(err)
-
       res.say("Cannot get dood state: " + err).send();;
     });
 
@@ -102,8 +76,8 @@ alexaApp.intent("EnableDood", {
         title: "Switcher Dud is ON",
         text: "Switcher Dud has been turned on",
         image: {
-          smallImageUrl: "https://apkplz.com/storage/images/com/codewithcontent/switcher/android/300/switcher-dud.png",
-          largeImageUrl: "https://apkplz.com/storage/images/com/codewithcontent/switcher/android/300/switcher-dud.png"
+          smallImageUrl: "https://switcher-dud.herokuapp.com/switcher-dud.png",
+          largeImageUrl: "https://switcher-dud.herokuapp.com/switcher-dud.png"
         }
       }).say("Dood was turned on successfully!").send();
 
