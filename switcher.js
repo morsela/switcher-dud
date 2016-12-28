@@ -7,6 +7,7 @@ var moment = require("moment");
 require("moment-duration-format");
 
 const BASE_URL        = "http://server.switcher.co.il/Switcher"
+const LOGIN           = BASE_URL + "/loginApp"
 const GET_SWITCHES    = BASE_URL + "/appServiceGetSwitches?token=%s"
 const ENABLE_CMD      = BASE_URL + "/appServiceSetSwitchState?token=%s&switchId=%s&state=on"
 const DISABLE_CMD     = BASE_URL + "/appServiceSetSwitchState?token=%s&switchId=%s&state=off"
@@ -14,9 +15,33 @@ const ENABLE_DURATION = BASE_URL + "/setSpontaneousEvent?token=%s&switchId=%s&is
 const GET_STATE       = BASE_URL + "/appServiceGetSwitchState?token=%s&switchId=%s"
 
 module.exports = class Switcher {
-    // static login(username, password) {
+    static login(username, password) {
+        var body = {
+            account_pid: username,
+            password: password,
+            app_id: "",
+            device_info: {
+              versions: {
+                os: "",
+                software: ""
+              }
+            }
+        }
 
-    // }
+        return new Promise((resolve, reject) => {
+            rp({ method: 'POST', uri: LOGIN, json: true, body: body }).then(body => {
+                if (body.errorCode != 0) {
+                    reject("Failed to login")
+                } else {
+                    resolve(body.token);
+                }
+              }).catch(err => {
+                  console.log(err)
+
+                  reject(err);
+              });
+        });
+    }
 
     static create(token) {
         return new Promise((resolve, reject) => {
