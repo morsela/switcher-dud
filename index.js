@@ -44,11 +44,11 @@ function getSwitchId(token) {
     });
 }
 
-// alexaApp.pre = function(request, response, type) {
-//   if (request.data.session.user.accessToken == undefined) {
-//     response.linkAccount().send()
-//   }
-// };
+alexaApp.pre = function(request, response, type) {
+  if (request.data.session.user.accessToken == undefined) {
+    response.linkAccount().send()
+  }
+};
 
 alexaApp.intent('GetDoodStatus', {
     "slots": { },
@@ -207,6 +207,7 @@ app.post('/echo/SwitcherDud/login/', function(req, res) {
   console.log(body);
   rp({ method: 'POST', uri: LOGIN, json: true, body: body }).then(function(body) {
     console.log(body);
+    console.log(req.session)
 
     if (body.errorCode != 0) {
       res.send("Failed to login")
