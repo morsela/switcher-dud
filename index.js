@@ -30,8 +30,8 @@ alexaApp.dictionary = { "start_synonym": ["turn on", "start", "enable"],
                         "stop_synonym":  ["turn off", "stop", "disable"] };
 
 alexaApp.pre = function(request, response, type) {
-  // console.log(request.data)
-  // console.log(request.data.session.user)
+  console.log(request.data)
+  console.log(request.data.session.user)
 
   if (request.data.session.user.accessToken == undefined) {
     response.linkAccount().say("please link the switcher dood account").send()
@@ -44,11 +44,7 @@ alexaApp.intent('GetDoodStatus', {
       "state", "status", "the status", "{ what\'s| what is| what|whats } the status"
     ]
   }, function(req, res) {
-    console.log('GetDoodStatus')
-    console.log(request.data.session.user.accessToken)
-    console.log(Switcher);
-    var switcher = new Switcher(request.data.session.user.accessToken);
-    console.log(switcher);
+    var switcher = new Switcher(req.data.session.user.accessToken);
     switcher.getState().then(function(result) {
       var stringToSay = 'The dood status is unknown';
 
@@ -60,8 +56,6 @@ alexaApp.intent('GetDoodStatus', {
 
       res.say(stringToSay).send();
     }).catch(function (err) {
-      console.log(err)
-
       res.say("Cannot get dood state: " + err).send();;
     });
 
