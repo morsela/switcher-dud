@@ -20,11 +20,15 @@ var PORT = process.env.PORT || 8080;
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.set("view engine", "ejs");
-
-const TOKEN     = process.env.SWITCHER_ACCOUNT_TOKEN
-const SWITCH_ID = process.env.SWITCHER_SWITCH_ID
+app.use(express.static('public'))
+app.use(session({
+  secret: '944e6073-98b4-4ffc-b486-f83c0bde0e40',
+  saveUninitialized: true,
+  resave: false
+}))
 
 var alexaApp = new alexa.app("SwitcherDud");
+alexaApp.express(app, "/echo/");
 
 alexaApp.dictionary = { "start_synonym": ["turn on", "start", "enable"], 
                         "stop_synonym":  ["turn off", "stop", "disable"] };
@@ -32,9 +36,6 @@ alexaApp.dictionary = { "start_synonym": ["turn on", "start", "enable"],
 alexaApp.error = console.error
 
 alexaApp.pre = function(request, response, type) {
-  console.log(request.data)
-  console.log(request.data.session.user)
-
   if (request.data.session.user.accessToken == undefined) {
     response.linkAccount().say("please link the switcher dood account").send()
   }
@@ -46,22 +47,22 @@ alexaApp.intent('GetDoodStatus', {
       "state", "status", "the status", "{ what\'s| what is| what|whats } the status"
     ]
   }, function(req, res) {
-    var switcher = new Switcher(req.data.session.user.accessToken);
-    switcher.getState().then(function(result) {
-      console.log(result);
-      var stringToSay = 'The dood status is unknown';
+    Switcher.create(req.data.session.user.accessToken).then(switcher => {
+      switcher.getState().then(result => {
+        var stringToSay = 'The dood status is unknown';
 
-      if (result.state == 'on') {
-        stringToSay = 'The dood is on for ' + result.duration_string;
-      } else if (result.state == 'off') {
-        stringToSay = 'The Dood is off';
-      } 
+        if (result.state == 'on') {
+          stringToSay = 'The dood is on for ' + result.duration_string;
+        } else if (result.state == 'off') {
+          stringToSay = 'The Dood is off';
+        } 
 
-      res.say(stringToSay).send();
-    }).catch(function (err) {
-      res.say("Cannot get dood state: " + err).send();;
+        res.say(stringToSay).send();
+      }).catch(function (err) {
+        res.say("Cannot get dood state: " + err).send();;
+      });
     });
-
+    
     return false;
   }
 );
@@ -73,21 +74,20 @@ alexaApp.intent("EnableDood", {
     ]
   },
   function(req, res) {
-    rp(util.format(ENABLE_CMD, TOKEN, SWITCH_ID)).then(function(body) {
-      res.card({
-        type: "Standard",
-        title: "Switcher Dud is ON",
-        text: "Switcher Dud has been turned on",
-        image: {
-          smallImageUrl: "https://switcher-dud.herokuapp.com/switcher-dud.png",
-          largeImageUrl: "https://switcher-dud.herokuapp.com/switcher-dud.png"
-        }
-      }).say("Dood was turned on successfully!").send();
-
-    }).catch(function (err) {
-      console.log(err)
-
-      res.say("cannot start dood").send();;
+    Switcher.create(req.data.session.user.accessToken).then(switcher => {
+      switcher.enable().then(result => {
+        res.card({
+          type: "Standard",
+          title: "Switcher Dud is ON",
+          text: "Switcher Dud has been turned on",
+          image: {
+            smallImageUrl: "https://switcher-dud.herokuapp.com/switcher-dud.png",
+            largeImageUrl: "https://switcher-dud.herokuapp.com/switcher-dud.png"
+          }
+        }).say("Dood was turned on successfully!").send();
+      }).catch(err => {
+        res.say("cannot start dood").send();
+      });
     });
 
     return false;
@@ -110,12 +110,12 @@ alexaApp.intent("EnableDoodWithDuration", {
 
     duration_string = moment.duration(duration_ms, "ms").format("h [hours], m [minutes], s [seconds]");
 
-    rp(util.format(ENABLE_DURATION, TOKEN, SWITCH_ID, duration_ms)).then(function(body) {
-      res.say(util.format("Dood was turned on for %s successfully!", duration_string)).send();
-    }).catch(function (err) {
-      console.log(err)
+    Switcher.create(req.data.session.user.accessToken).then(switcher => {
+      switcher.enableWithDuration(duration_ms).then(result => {
 
-      res.say(util.format("cannot start dood for duration %s because %s", duration_string, err)).send();
+      }).catch(err => {
+        res.say(util.format("cannot start dood for %s because %s", duration_string, err)).send();
+      });
     });
 
     return false;
@@ -129,34 +129,25 @@ alexaApp.intent("DisableDood", {
     ]
   },
   function(req, res)  {
-    rp(util.format(DISABLE_CMD, TOKEN, SWITCH_ID)).then(function(body) {
-      res.card({
-        type: "Standard",
-        title: "Switcher Dud is OFF",
-        text: "Switcher Dud has been turned off",
-        image: {
-          smallImageUrl: "https://apkplz.com/storage/images/com/codewithcontent/switcher/android/300/switcher-dud.png",
-          largeImageUrl: "https://apkplz.com/storage/images/com/codewithcontent/switcher/android/300/switcher-dud.png"
-        }
-      }).say("Dood was turned off successfully!").send();
-    }).catch(function (err) {
-      console.log(err)
-
-      res.say("cannot turn off dood").send();
+    Switcher.create(req.data.session.user.accessToken).then(switcher => {
+      switcher.disable().then(result => {
+        res.card({
+          type: "Standard",
+          title: "Switcher Dud is OFF",
+          text: "Switcher Dud has been turned off",
+          image: {
+            smallImageUrl: "https://apkplz.com/storage/images/com/codewithcontent/switcher/android/300/switcher-dud.png",
+            largeImageUrl: "https://apkplz.com/storage/images/com/codewithcontent/switcher/android/300/switcher-dud.png"
+          }
+        }).say("Dood was turned off successfully!").send();
+      }).catch(err => {
+        res.say("cannot turn off dood").send();
+      })
     });
 
     return false;
   }
 );
-
-alexaApp.express(app, "/echo/");
-
-app.use(express.static('public'))
-app.use(session({
-  secret: '944e6073-98b4-4ffc-b486-f83c0bde0e40',
-  saveUninitialized: true,
-  resave: false
-}))
 
 app.get('/echo/SwitcherDud/login/', function(req, res) {
   req.session.state       = req.query.state
@@ -182,18 +173,13 @@ app.post('/echo/SwitcherDud/login/', function(req, res) {
     }
   }
 
-  console.log(body);
   rp({ method: 'POST', uri: LOGIN, json: true, body: body }).then(function(body) {
-    console.log(body);
-    console.log(req.session)
-
     if (body.errorCode != 0) {
       res.send("Failed to login")
     } else {
       var access_token = body.token
 
       if (req.session.redirectURI != undefined) {
-        console.log(util.format('%s#state=%s&access_token=%s&token_type=Bearer', req.session.redirectURI, req.session.state, access_token))
         res.redirect(util.format('%s#state=%s&access_token=%s&token_type=Bearer', req.session.redirectURI, req.session.state, access_token))
       } else {
         res.send("Login success")
