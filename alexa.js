@@ -28,19 +28,19 @@ module.exports = function(app) {
       ]
     }, function(req, res) {
       Switcher.create(req.data.session.user.accessToken).then(switcher => {
-        switcher.getState().then(result => {
-          var stringToSay = 'The dood status is unknown';
+        return switcher.getState();
+      }).then(result => {
+        var stringToSay = 'The dood status is unknown';
 
-          if (result.state == 'on') {
-            stringToSay = 'The dood is on for ' + result.duration_string;
-          } else if (result.state == 'off') {
-            stringToSay = 'The Dood is off';
-          } 
+        if (result.state == 'on') {
+          stringToSay = 'The dood is on for ' + result.duration_string;
+        } else if (result.state == 'off') {
+          stringToSay = 'The Dood is off';
+        } 
 
-          res.say(stringToSay).send();
-        }).catch(function (err) {
-          res.say("Cannot get dood state: " + err).send();;
-        });
+        res.say(stringToSay).send();
+      }).catch(function (err) {
+        res.say("Cannot get dood state: " + err).send();
       });
       
       return false;
@@ -55,7 +55,8 @@ module.exports = function(app) {
     },
     function(req, res) {
       Switcher.create(req.data.session.user.accessToken).then(switcher => {
-        switcher.enable().then(result => {
+        return switcher.enable();
+      }).then(result => {
           res.card({
             type: "Standard",
             title: "Switcher Dud is ON",
@@ -65,9 +66,8 @@ module.exports = function(app) {
               largeImageUrl: "https://switcher-dud.herokuapp.com/switcher-dud.png"
             }
           }).say("Dood was turned on successfully!").send();
-        }).catch(err => {
-          res.say("cannot start dood").send();
-        });
+      }).catch(err => {
+        res.say("cannot start dood").send();
       });
 
       return false;
@@ -91,11 +91,11 @@ module.exports = function(app) {
       duration_string = moment.duration(duration_ms, "ms").format("h [hours], m [minutes]");
 
       Switcher.create(req.data.session.user.accessToken).then(switcher => {
-        switcher.enableWithDuration(duration_ms).then(result => {
-          res.say(util.format("Dood was turned on for %s successfully!", duration_string)).send();
-        }).catch(err => {
-          res.say(util.format("cannot start dood for %s because %s", duration_string, err)).send();
-        });
+        return switcher.enableWithDuration(duration_ms);
+      }).then(result => {
+        res.say(util.format("Dood was turned on for %s successfully!", duration_string)).send();
+      }).catch(err => {
+        res.say(util.format("cannot start dood for %s because %s", duration_string, err)).send();
       });
 
       return false;
@@ -110,20 +110,20 @@ module.exports = function(app) {
     },
     function(req, res)  {
       Switcher.create(req.data.session.user.accessToken).then(switcher => {
-        switcher.disable().then(result => {
-          res.card({
-            type: "Standard",
-            title: "Switcher Dud is OFF",
-            text: "Switcher Dud has been turned off",
-            image: {
-              smallImageUrl: "https://apkplz.com/storage/images/com/codewithcontent/switcher/android/300/switcher-dud.png",
-              largeImageUrl: "https://apkplz.com/storage/images/com/codewithcontent/switcher/android/300/switcher-dud.png"
-            }
-          }).say("Dood was turned off successfully!").send();
-        }).catch(err => {
-          res.say("cannot turn off dood").send();
-        })
-      });
+        return switcher.disable();
+      }).then(result => {
+        res.card({
+          type: "Standard",
+          title: "Switcher Dud is OFF",
+          text: "Switcher Dud has been turned off",
+          image: {
+            smallImageUrl: "https://apkplz.com/storage/images/com/codewithcontent/switcher/android/300/switcher-dud.png",
+            largeImageUrl: "https://apkplz.com/storage/images/com/codewithcontent/switcher/android/300/switcher-dud.png"
+          }
+        }).say("Dood was turned off successfully!").send();
+      }).catch(err => {
+        res.say("cannot turn off dood").send();
+      })
 
       return false;
     }
