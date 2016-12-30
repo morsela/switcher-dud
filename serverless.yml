@@ -12,3 +12,4 @@ functions:
     handler: handler.switcher_dud
     events:
       - alexaSkill
+    memorySize: 256
