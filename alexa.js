@@ -116,8 +116,8 @@ module.exports = function() {
           title: "Switcher Dud is OFF",
           text: "Switcher Dud has been turned off",
           image: {
-            smallImageUrl: "https://apkplz.com/storage/images/com/codewithcontent/switcher/android/300/switcher-dud.png",
-            largeImageUrl: "https://apkplz.com/storage/images/com/codewithcontent/switcher/android/300/switcher-dud.png"
+            smallImageUrl: "https://switcher-dud.herokuapp.com/switcher-dud.png",
+            largeImageUrl: "https://switcher-dud.herokuapp.com/switcher-dud.png"
           }
         }).say("Dood was turned off successfully!").send();
       }).catch(err => {
