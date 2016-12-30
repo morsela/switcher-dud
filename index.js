@@ -15,7 +15,9 @@ app.use(session({
   resave: false
 }))
 
-require('./alexa.js')(app);
+var alexaApp = require('./alexa.js')();
+alexaApp.express(app, "/echo/");
+
 require('./login.js')(app);
 
 app.listen(PORT);

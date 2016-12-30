@@ -6,9 +6,8 @@ require("moment-duration-format");
 
 var Switcher = require('./switcher')
 
-module.exports = function(app) {
+module.exports = function() {
   var alexaApp = new alexa.app("SwitcherDud");
-  alexaApp.express(app, "/echo/");
 
   alexaApp.dictionary = { "start_synonym": ["turn on", "start", "enable"], 
                           "stop_synonym":  ["turn off", "stop", "disable"] };
@@ -128,4 +127,6 @@ module.exports = function(app) {
       return false;
     }
   );
+
+  return alexaApp;
 }
