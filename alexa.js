@@ -17,7 +17,7 @@ module.exports = function() {
 
   alexaApp.pre = function(request, response, type) {
     if (request.data.session.user.accessToken == undefined) {
-      mixpanel.track('link_account', request);
+      mixpanel.track('link_account');
 
       response.linkAccount().say("please link the switcher dood account").send()
     }
@@ -29,7 +29,7 @@ module.exports = function() {
         "state", "status", "the status", "{ what\'s| what is| what|whats } the status"
       ]
     }, function(req, res) {
-      mixpanel.track('get_status', req);
+      mixpanel.track('get_status');
 
       Switcher.create(req.data.session.user.accessToken).then(switcher => {
         return switcher.getState();
@@ -58,7 +58,7 @@ module.exports = function() {
       ]
     },
     function(req, res) {
-      mixpanel.track('enable', req);
+      mixpanel.track('enable');
 
       Switcher.create(req.data.session.user.accessToken).then(switcher => {
         return switcher.enable();
@@ -90,7 +90,7 @@ module.exports = function() {
       ]
     },
     function(req, res) {
-      mixpanel.track('enable_with_duration', req);
+      mixpanel.track('enable_with_duration');
 
       var duration_param = req.slot("Duration");
       duration_param     = duration_param.replace("PT", "");
@@ -117,7 +117,7 @@ module.exports = function() {
       ]
     },
     function(req, res)  {
-      mixpanel.track('disable', req);
+      mixpanel.track('disable');
 
       Switcher.create(req.data.session.user.accessToken).then(switcher => {
         return switcher.disable();

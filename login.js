@@ -15,7 +15,7 @@ module.exports = function(app) {
 
     app.post('/echo/SwitcherDud/login/', function(req, res) {
         Switcher.login(req.body.username, req.body.password).then(accessToken => {
-            mixpanel.track('login_success', req);
+            mixpanel.track('login_success');
 
             if (req.session.redirectURI != undefined) {
                 res.redirect(util.format('%s#state=%s&access_token=%s&token_type=Bearer', req.session.redirectURI, req.session.state, accessToken))
@@ -23,7 +23,7 @@ module.exports = function(app) {
                 res.send("Login success")
             }
         }).catch(err => {
-            mixpanel.track('login_failure', req);
+            mixpanel.track('login_failure');
 
             console.error(err);
 

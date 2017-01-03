@@ -10,6 +10,6 @@ if (ALLOW_MIXPANEL) {
 
 module.exports.track = function(event_name, request) {
 	if (ALLOW_MIXPANEL) {
-    	mixpanel.track(event_name, { ip: request.headers['x-forwarded-for'] || request.connection.remoteAddress });
+    	mixpanel.track(event_name);
     }
 }
