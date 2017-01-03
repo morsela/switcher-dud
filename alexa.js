@@ -5,6 +5,7 @@ var parseDuration = require('parse-duration')
 require("moment-duration-format");
 
 var Switcher = require('./switcher')
+var mixpanel = require('./switcher_mixpanel');
 
 module.exports = function() {
   var alexaApp = new alexa.app("SwitcherDud");
@@ -16,6 +17,8 @@ module.exports = function() {
 
   alexaApp.pre = function(request, response, type) {
     if (request.data.session.user.accessToken == undefined) {
+      mixpanel.track('link_account', request);
+
       response.linkAccount().say("please link the switcher dood account").send()
     }
   };
@@ -26,6 +29,8 @@ module.exports = function() {
         "state", "status", "the status", "{ what\'s| what is| what|whats } the status"
       ]
     }, function(req, res) {
+      mixpanel.track('get_status', req);
+
       Switcher.create(req.data.session.user.accessToken).then(switcher => {
         return switcher.getState();
       }).then(result => {
@@ -53,6 +58,8 @@ module.exports = function() {
       ]
     },
     function(req, res) {
+      mixpanel.track('enable', req);
+
       Switcher.create(req.data.session.user.accessToken).then(switcher => {
         return switcher.enable();
       }).then(result => {
@@ -83,6 +90,8 @@ module.exports = function() {
       ]
     },
     function(req, res) {
+      mixpanel.track('enable_with_duration', req);
+
       var duration_param = req.slot("Duration");
       duration_param     = duration_param.replace("PT", "");
       var duration_ms    = parseDuration(duration_param)
@@ -108,6 +117,8 @@ module.exports = function() {
       ]
     },
     function(req, res)  {
+      mixpanel.track('disable', req);
+
       Switcher.create(req.data.session.user.accessToken).then(switcher => {
         return switcher.disable();
       }).then(result => {
