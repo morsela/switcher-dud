@@ -20,6 +20,8 @@ module.exports = function(app) {
 	            res.send("Login success")
 	        }
 	    }).catch(err => {
+	    	console.error(err);
+
 	        res.send("login failed")
 	    });
 	});
