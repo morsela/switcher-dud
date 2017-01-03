@@ -15,7 +15,7 @@ module.exports = function(app) {
 	app.post('/echo/SwitcherDud/login/', function(req, res) {
 	    Switcher.login(req.body.username, req.body.password).then(accessToken => {
 	        if (req.session.redirectURI != undefined) {
-	            res.redirect(util.format('%s#state=%s&access_token=%s&token_type=Bearer', req.session.redirectURI, req.session.state, access_token))
+	            res.redirect(util.format('%s#state=%s&access_token=%s&token_type=Bearer', req.session.redirectURI, req.session.state, accessToken))
 	        } else {
 	            res.send("Login success")
 	        }
