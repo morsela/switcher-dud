@@ -16,6 +16,10 @@ module.exports = function() {
   alexaApp.error = console.error
 
   alexaApp.pre = function(request, response, type) {
+    if (request.data.session.application.applicationId != process.env.ALEXA_APPLICATION_ID) {
+        response.fail("Invalid Application");
+    }
+
     if (request.data.session.user.accessToken == undefined) {
       mixpanel.track('link_account');
 
@@ -67,10 +71,6 @@ module.exports = function() {
             type: "Standard",
             title: "Switcher Dud is ON",
             text: "Switcher Dud has been turned on",
-            image: {
-              smallImageUrl: "https://switcher-dud.herokuapp.com/switcher-dud.png",
-              largeImageUrl: "https://switcher-dud.herokuapp.com/switcher-dud.png"
-            }
           }).say("Dood was turned on successfully!").send();
       }).catch(err => {
         res.say("cannot start dood").send();
@@ -126,10 +126,6 @@ module.exports = function() {
           type: "Standard",
           title: "Switcher Dud is OFF",
           text: "Switcher Dud has been turned off",
-          image: {
-            smallImageUrl: "https://switcher-dud.herokuapp.com/switcher-dud.png",
-            largeImageUrl: "https://switcher-dud.herokuapp.com/switcher-dud.png"
-          }
         }).say("Dood was turned off successfully!").send();
       }).catch(err => {
         res.say("cannot turn off dood").send();
