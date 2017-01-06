@@ -27,6 +27,10 @@ module.exports = function() {
     }
   };
 
+  alexaApp.launch(function(request, response) {
+    response.say("Welcome to the unofficial switcher dood Alexa skill");
+  });
+
   alexaApp.intent('GetDoodStatus', {
       "slots": { },
       "utterances": [
