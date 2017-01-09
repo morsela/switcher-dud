@@ -28,7 +28,9 @@ module.exports = function() {
   };
 
   alexaApp.launch(function(request, response) {
-    response.say("Welcome to the unofficial switcher dood Alexa skill");
+    response.say("Welcome to the unofficial switcher dood Alexa skill, to start your Switcher dood say start, to ask for status say status and to stop say stop.");
+
+    response.shouldEndSession(false);
   });
 
   alexaApp.intent('GetDoodStatus', {
