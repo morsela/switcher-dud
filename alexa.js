@@ -41,8 +41,8 @@ module.exports = function() {
     }, function(req, res) {
       mixpanel.track('help');
       
-      response.say("This skill can help you with intuitively controlling your Switcher Dood with your voice only. You can also exit the skill be saying cancel. What do you want the dood to do now?");
-      response.shouldEndSession(false);
+      res.say("This skill can help you with intuitively controlling your Switcher Dood with your voice only. You can also exit the skill be saying cancel. What do you want the dood to do now?");
+      res.shouldEndSession(false);
 
       return false;
     }
@@ -56,7 +56,7 @@ module.exports = function() {
     }, function(req, res) {
       mixpanel.track('cancel');
       
-      response.shouldEndSession(true);
+      res.shouldEndSession(true);
 
       return false;
     }
