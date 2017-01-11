@@ -43,8 +43,6 @@ module.exports = function() {
       
       res.say("This skill can help you with intuitively controlling your Switcher Dood with your voice only. You can also exit the skill be saying cancel. What do you want the dood to do now?");
       res.shouldEndSession(false);
-
-      return false;
     }
   );
 
@@ -57,8 +55,6 @@ module.exports = function() {
       mixpanel.track('cancel');
       
       res.shouldEndSession(true);
-
-      return false;
     }
   );
 
