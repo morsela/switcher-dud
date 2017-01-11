@@ -33,7 +33,7 @@ module.exports = function() {
     response.shouldEndSession(false);
   });
 
-  alexaApp.intent('HelpIntent', {
+  alexaApp.intent('Help', {
       "slots": { },
       "utterances": [
         "help"
