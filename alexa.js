@@ -28,10 +28,39 @@ module.exports = function() {
   };
 
   alexaApp.launch(function(request, response) {
-    response.say("Welcome to the unofficial switcher dood Alexa skill, to start your Switcher dood say start, to ask for status say status and to stop say stop.");
+    response.say("Welcome to the unofficial switcher dood, to start your Switcher dood say start, to ask for status say status and to stop say stop.");
 
     response.shouldEndSession(false);
   });
+
+  alexaApp.intent('HelpIntent', {
+      "slots": { },
+      "utterances": [
+        "help"
+      ]
+    }, function(req, res) {
+      mixpanel.track('help');
+      
+      response.say("This skill can help you with intuitively controlling your Switcher Dood with your voice only. You can also exit the skill be saying cancel. What do you want the dood to do now?");
+      response.shouldEndSession(false);
+
+      return false;
+    }
+  );
+
+  alexaApp.intent('Cancel', {
+      "slots": { },
+      "utterances": [
+        "cancel"
+      ]
+    }, function(req, res) {
+      mixpanel.track('cancel');
+      
+      response.shouldEndSession(true);
+
+      return false;
+    }
+  );
 
   alexaApp.intent('GetDoodStatus', {
       "slots": { },
